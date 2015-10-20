@@ -19,28 +19,28 @@
 	};
 
     // check and see if we have a saved ChannelURI
-	var applicationData = Windows.Storage.ApplicationData.current;
-	var localSettings = applicationData.localSettings;
+    var applicationData = Windows.Storage.ApplicationData.current;
+    var localSettings = applicationData.localSettings;
 
-	var savedChannelURI = localSettings.values["WNSChannelURI"];
+    var savedChannelURI = localSettings.values["WNSChannelURI"];
 
     // get current channel URI for notifications
-	var pushNotifications = Windows.Networking.PushNotifications;
-	var channelOperation = pushNotifications.PushNotificationChannelManager.createPushNotificationChannelForApplicationAsync();
+    var pushNotifications = Windows.Networking.PushNotifications;
+    var channelOperation = pushNotifications.PushNotificationChannelManager.createPushNotificationChannelForApplicationAsync();
 
     // get current channel URI and check against saved URI
-	channelOperation.then(function (newChannel) {
-	    return newChannel.uri;
-	}).then(function (currentChannelURI) {
-	    // if we don't have a saved URI, or its changed, re-register with Notification Hub 
-	    if (!savedChannelURI || savedChannelURI.toLowerCase() != currentChannelURI.toLowerCase()) {
-	        // register with notification hub
+    channelOperation.then(function (newChannel) {
+        return newChannel.uri;
+    }).then(function (currentChannelURI) {
+        // if we don't have a saved URI, or its changed, re-register with Notification Hub 
+        if (!savedChannelURI || savedChannelURI.toLowerCase() != currentChannelURI.toLowerCase()) {
+            // register with notification hub
             //TODO: call API to register with notification hub
 
-	        // save/update channel URI
-	        localSettings.values["WNSChannelURI"] = currentChannelURI;
-	    }
-	}).done();
+            // save/update channel URI
+            localSettings.values["WNSChannelURI"] = currentChannelURI;
+        }
+    }).done();
 
 	app.oncheckpoint = function (args) {
 		// TODO: This application is about to be suspended. Save any state that needs to persist across suspensions here.
