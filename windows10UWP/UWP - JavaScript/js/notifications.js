@@ -24,22 +24,36 @@
             }).then(function (currentChannelURI) {
                 // if we don't have a saved URI, or its changed, re-register with Notification Hub 
                 if (!savedChannelURI || savedChannelURI.toLowerCase() != currentChannelURI.toLowerCase()) {
-                    // get a Notification Hub registration ID
-                    return new WinJS.xhr({
-                        type: "POST",
+                    //// get a Notification Hub registration ID
+
+                    WinJS.xhr({
+                        type: "post",
                         url: "http://localhost:7521/api/register",
-                        headers: {
-                            "Content-Type": "application/json"
+                        headers: { "Content-type": "application/x-www-form-urlencoded" },
+                        responseType: "text",
+                        data: "channeluri=" + currentChannelURI.toLowerCase()
+                    }).then(
+                        function (success) {
+                            // strip the double quotes off the string, we don't want those
+                            var deviceId = success.responseText.replace(/['"]/g,'');
+                            console.log("Device ID is: " + deviceId);
+
+                            // update the registration
+
+                            // save/update channel URI
+                            localSettings.values["WNSChannelURI"] = currentChannelURI;
                         },
-                        data: { "channeluri": "mystring" }
-                    }).then(function (req) {
-                        location = req.getResponseHeader("Content-Location");
+                        function (error) {
+                            console.log(JSON.parse(error.responseText));
+                        }
+                    ).done();
 
-                        // do something with the result
-
-                        // save/update channel URI
-                        localSettings.values["WNSChannelURI"] = currentChannelURI;
-                    })
+                    //    // do something with the result
+                    //    var registrationpayload = {
+                    //        "platform": "wns",
+                    //        "handle": location,
+                    //        "tags": ["tag1", "tag2"]
+                    //    };
                 }
             }).done();
         }

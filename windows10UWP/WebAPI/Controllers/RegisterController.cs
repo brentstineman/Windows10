@@ -22,9 +22,9 @@ namespace WebAPI.Controllers
             hub = Notifications.Instance.Hub;
         }
 
-        public class regGetResitrationId
+        public class regGetRegistrationId
         {
-            public string ChannelUri { get; set; }
+            public string channeluri { get; set; }
         }
 
         public class DeviceRegistration
@@ -60,18 +60,18 @@ namespace WebAPI.Controllers
         //}
 
         // POST api/register
-        // This creates a registration id
+        // This creates a registration id based on the provided channel URI
         [HttpPost]
         [Route("api/register/")]
-//        public async Task<HttpResponseMessage> Post([FromBody]regGetResitrationId request)
-        public async Task<HttpResponseMessage> Post([FromBody]regGetResitrationId request)
+        public async Task<HttpResponseMessage> Post([FromBody]regGetRegistrationId request)
         {
             string newRegistrationId = null;
+            string channelUri = request.channeluri;
 
-            // make sure there are no existing registrations for this push handle (used for iOS and Android)
-            if (request.ChannelUri != null)
+            // make sure there are no existing registrations for the channel URI provided
+            if (channelUri != null)
             {
-                var registrations = await hub.GetRegistrationsByChannelAsync(request.ChannelUri, 100);
+                var registrations = await hub.GetRegistrationsByChannelAsync(channelUri, 100);
 
                 foreach (RegistrationDescription registration in registrations)
                 {
