@@ -29,9 +29,10 @@ namespace WebAPI.Controllers
 
         public class DeviceRegistration
         {
-            public string Platform { get; set; }
-            public string Handle { get; set; }
-            public string[] Tags { get; set; }
+            public string deviceid { get; set; }
+            public string platform { get; set; }
+            public string handle { get; set; }
+            public string[] tags { get; set; }
         }
 
         //[HttpGet]
@@ -52,13 +53,6 @@ namespace WebAPI.Controllers
         //    return Request.CreateResponse(HttpStatusCode.OK, registrations.Count() + " devices registered");
         //}
 
-        [HttpPut]
-        [Route("api/register/{stuff}")]
-        //public async Task<HttpResponseMessage> Put(string stuff)
-        //{
-        //    return Request.CreateErrorResponse(HttpStatusCode.OK, "Simple Put worked");
-        //}
-
         // POST api/register
         // This creates a registration id based on the provided channel URI
         [HttpPost]
@@ -67,6 +61,8 @@ namespace WebAPI.Controllers
         {
             string newRegistrationId = null;
             string channelUri = request.channeluri;
+
+            //todo: validate the URI is for notify.windows.com domain
 
             // make sure there are no existing registrations for the channel URI provided
             if (channelUri != null)
@@ -95,31 +91,31 @@ namespace WebAPI.Controllers
         // PUT api/register
         // This creates or updates a registration (with provided channelURI) at the specified id
         [HttpPut]
-        [Route("api/register/{id}")]
-        public async Task<HttpResponseMessage> Put(string id, [FromBody]DeviceRegistration deviceUpdate)
+        [Route("api/register/")]
+        public async Task<HttpResponseMessage> Put([FromBody]DeviceRegistration deviceUpdate)
         {
             //DeviceRegistration deviceUpdate = null;
             RegistrationDescription registration = null;
-            switch (deviceUpdate.Platform)
+            switch (deviceUpdate.platform)
             {
                 case "mpns":
-                    registration = new MpnsRegistrationDescription(deviceUpdate.Handle);
+                    registration = new MpnsRegistrationDescription(deviceUpdate.handle);
                     break;
                 case "wns":
-                    registration = new WindowsRegistrationDescription(deviceUpdate.Handle);
+                    registration = new WindowsRegistrationDescription(deviceUpdate.handle);
                     break;
                 case "apns":
-                    registration = new AppleRegistrationDescription(deviceUpdate.Handle);
+                    registration = new AppleRegistrationDescription(deviceUpdate.handle);
                     break;
                 case "gcm":
-                    registration = new GcmRegistrationDescription(deviceUpdate.Handle);
+                    registration = new GcmRegistrationDescription(deviceUpdate.handle);
                     break;
                 default:
                     throw new HttpResponseException(HttpStatusCode.BadRequest);
             }
 
-            registration.RegistrationId = id;
-            registration.Tags = new HashSet<string>(deviceUpdate.Tags);
+            registration.RegistrationId = deviceUpdate.deviceid;
+            registration.Tags = new HashSet<string>(deviceUpdate.tags);
 
             try
             {

@@ -24,38 +24,51 @@
             }).then(function (currentChannelURI) {
                 // if we don't have a saved URI, or its changed, re-register with Notification Hub 
                 if (!savedChannelURI || savedChannelURI.toLowerCase() != currentChannelURI.toLowerCase()) {
-                    //// get a Notification Hub registration ID
+                    console.log("Channel URI has changed, need to register it with notification hub");
 
+                    // get a Notification Hub registration ID
                     WinJS.xhr({
                         type: "post",
                         url: "http://localhost:7521/api/register",
                         headers: { "Content-type": "application/x-www-form-urlencoded" },
                         responseType: "text",
                         data: "channeluri=" + currentChannelURI.toLowerCase()
-                    }).then(
-                        function (success) {
+                    }).then(function (getIdSuccess) {
                             // strip the double quotes off the string, we don't want those
-                            var deviceId = success.responseText.replace(/['"]/g,'');
+                        var deviceId = getIdSuccess.responseText.replace(/['"]/g, '');
                             console.log("Device ID is: " + deviceId);
 
-                            // update the registration
+                            // create object for notification hub device registration
+                            var registrationpayload = {
+                                "deviceid"  : deviceId,
+                                "platform"  : "wns",
+                                "handle"    : currentChannelURI,
+                                "tags"      : ["tag1", "tag2"]
+                            };
 
-                            // save/update channel URI
-                            localSettings.values["WNSChannelURI"] = currentChannelURI;
+                            // update the registration
+                            WinJS.xhr({
+                                type: "put",
+                                url: "http://localhost:7521/api/register/",
+                                headers: { "Content-type": "application/json" },
+                                data: JSON.stringify(registrationpayload)
+                            }).then(
+                                function (registerSuccess) {
+                                    console.log("Device successfully registered");
+
+                                    // save/update channel URI for next app launch
+                                    localSettings.values["WNSChannelURI"] = currentChannelURI;
+                                },
+                                function (error) {
+                                    console.log(JSON.parse(error.responseText));
+                                }
+                            ).done();
                         },
                         function (error) {
                             console.log(JSON.parse(error.responseText));
                         }
                     ).done();
-
-                    //    // do something with the result
-                    //    var registrationpayload = {
-                    //        "platform": "wns",
-                    //        "handle": location,
-                    //        "tags": ["tag1", "tag2"]
-                    //    };
                 }
             }).done();
         }
     };
-// application/json
