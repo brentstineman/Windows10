@@ -1,4 +1,16 @@
-﻿using System;
+﻿// TAG: #notificationhubjs
+//
+// This controller exposes two API methods to be used for registering applications with the Azure Notification Hub. 
+// An server side API is being used so that the client app does not need to contain credentials for accessing the notification hub
+// directly, as this would present a security risk. Ideally, in normal production scenarios, the APIs would be protected and require 
+// some type of authentication before they can be called. But this has not been implemented in this sample to keep things as straight-forward 
+// as possible. 
+// 
+// API methods include:
+// api/register (POST): given a channel URI, this returns a device ID from the registry
+// api/register (PUT): given the registration detail, it creates a notification hub device registry or updates it if on already exists
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -22,21 +34,30 @@ namespace WebAPI.Controllers
             hub = Notifications.Instance.Hub;
         }
 
+        /// <summary>
+        /// This is the request payload used by the [POST]api/register method
+        /// </summary>
         public class regGetRegistrationId
         {
             public string channeluri { get; set; }
         }
 
+        /// <summary>
+        /// This is the request payload used by the [PUT]api/register method
+        /// </summary>
         public class DeviceRegistration
         {
-            public string deviceid { get; set; }
-            public string platform { get; set; }
-            public string handle { get; set; }
-            public string[] tags { get; set; }
+            public string deviceid { get; set; } // the device ID
+            public string platform { get; set; } // what platform, WNS, APNS, etc... 
+            public string handle { get; set; } // callback handle for the associated notification service
+            public string[] tags { get; set; } // tags to be used in targetting notifications
         }
 
-        // POST api/register
-        // This creates a registration id based on the provided channel URI
+        /// <summary>
+        ///     This creates a registration id based on the provided channel URI
+        /// </summary>
+        /// <param name="request">the channelURI used by the application</param>
+        /// <returns>a notification hub device ID</returns>
         [HttpPost]
         [Route("api/register/")]
         public async Task<HttpResponseMessage> Post([FromBody]regGetRegistrationId request)
@@ -70,15 +91,17 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, newRegistrationId);
         }
 
-        // PUT api/register
-        // This creates or updates a registration (with provided channelURI) at the specified id
+        /// <summary>
+        ///     This creates or updates a registration (with provided channelURI) at the specified id
+        /// </summary>
+        /// <param name="deviceUpdate">contains the parameters needed to perform the registration update</param>
+        /// <returns>nothing</returns>
         [HttpPut]
         [Route("api/register/")]
         public async Task<HttpResponseMessage> Put([FromBody]DeviceRegistration deviceUpdate)
         {
-            //DeviceRegistration deviceUpdate = null;
             RegistrationDescription registration = null;
-            switch (deviceUpdate.platform)
+            switch (deviceUpdate.platform.ToLower())
             {
                 case "mpns":
                     registration = new MpnsRegistrationDescription(deviceUpdate.handle);
@@ -98,6 +121,8 @@ namespace WebAPI.Controllers
 
             registration.RegistrationId = deviceUpdate.deviceid;
             registration.Tags = new HashSet<string>(deviceUpdate.tags);
+            // optionally you could supplement/override the list of client supplied tags here
+            // tags will help you target specific devices or groups of devices depending on your needs
 
             try
             {

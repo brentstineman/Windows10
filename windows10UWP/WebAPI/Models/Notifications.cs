@@ -1,4 +1,8 @@
-﻿using System;
+﻿// TAG: #notificationhubjs	
+// This class sets up the Notification Hub client to be used when calls are made to the API (/Controllers/RegisterController.cs)
+// It retrieves two property settings that contain the connection string and notification hub name to be used by the API
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;

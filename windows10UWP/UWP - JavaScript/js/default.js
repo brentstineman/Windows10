@@ -11,8 +11,8 @@
 			if (args.detail.previousExecutionState !== activation.ApplicationExecutionState.terminated) {
 				// TODO: This application has been newly launched. Initialize your application here.
 
-			    // register the app for notifications
-			    uwpNotifications.registerChannelURI();
+			    // TAG: #notificationhubjs			    
+			    uwpNotifications.registerChannelURI(); // register the app for notifications
 			} else {
 				// TODO: This application was suspended and then terminated.
 				// To create a smooth user experience, restore application state here so that it looks like the app never stopped running.
