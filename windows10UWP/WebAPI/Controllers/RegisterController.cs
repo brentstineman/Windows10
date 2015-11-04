@@ -35,24 +35,6 @@ namespace WebAPI.Controllers
             public string[] tags { get; set; }
         }
 
-        //[HttpGet]
-        //[Route("api/registrations")]
-        //public async Task<HttpResponseMessage> Get()
-        //{
-        //    //var registrationsCount = await hub.GetAllRegistrationsAsync(0);
-        //    //var registrationsCount = await hub.GetRegistrationsByTagAsync("tag1",10);
-
-        //    string connectionString = @"Endpoint=sb://bmstesthub.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=D+fvSAjEMbA2dBHeX3J181Y5oTAo54pYId3UCHQAxUc=";
-        //    string hubName = "bmstesthub";
-
-        //    var namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-
-        //    NotificationHubClient hubClient = NotificationHubClient.CreateClientFromConnectionString(connectionString, hubName);
-        //    var registrations = hubClient.GetRegistrationsByTagAsync("tag1", 1).Result;
-
-        //    return Request.CreateResponse(HttpStatusCode.OK, registrations.Count() + " devices registered");
-        //}
-
         // POST api/register
         // This creates a registration id based on the provided channel URI
         [HttpPost]
@@ -128,23 +110,5 @@ namespace WebAPI.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
-
-        //// DELETE api/register/5
-        //public async Task<HttpResponseMessage> Delete(string id)
-        //{
-        //    await hub.DeleteRegistrationAsync(id);
-        //    return Request.CreateResponse(HttpStatusCode.OK);
-        //}
-
-        //private static void ReturnGoneIfHubResponseIsGone(MessagingException e)
-        //{
-        //    var webex = e.InnerException as WebException;
-        //    if (webex.Status == WebExceptionStatus.ProtocolError)
-        //    {
-        //        var response = (HttpWebResponse)webex.Response;
-        //        if (response.StatusCode == HttpStatusCode.Gone)
-        //            throw new HttpRequestException(HttpStatusCode.Gone.ToString());
-        //    }
-        //}
     }
 }
