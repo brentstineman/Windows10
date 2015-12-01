@@ -13,9 +13,59 @@
     <link href="/css/default.css" rel="stylesheet" />
     <!-- TAG: #notificationhubjs -->
     <script src="/js/notifications.js"></script> <!-- Notification Hub Integration -->
+    <script src="/js/draganddrop.js"></script>
     <script src="/js/default.js"></script>
 </head>
 <body class="win-type-body">
-    <p>Content goes here</p>
+    <style>
+        #holder {
+            border: 10px dashed #ccc;
+            width: 300px;
+            min-height: 300px;
+            margin: 20px auto;
+        }
+
+            #holder.hover {
+                border: 10px dashed #0c0;
+            }
+
+            #holder img {
+                display: block;
+                margin: 10px auto;
+            }
+
+            #holder p {
+                margin: 10px;
+                font-size: 14px;
+            }
+
+        progress {
+            width: 100%;
+        }
+
+            progress:after {
+                content: '%';
+            }
+
+        .fail {
+            background: #c00;
+            padding: 2px;
+            color: #fff;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+    <article>
+        <div id="holder">
+        </div>
+        <p id="upload" class="hidden"><label>Drag & drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>
+        <p id="filereader">File API & FileReader API not supported</p>
+        <p id="formdata">XHR2's FormData is not supported</p>
+        <p id="progress">XHR2's upload progress isn't supported</p>
+        <p>Upload progress: <progress id="uploadprogress" min="0" max="100" value="0">0</progress></p>
+        <p>Drag an image from your desktop on to the drop zone above to see the browser both render the preview, but also upload automatically to this server.</p>
+    </article>
 </body>
 </html>

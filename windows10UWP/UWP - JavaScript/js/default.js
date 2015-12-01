@@ -28,4 +28,8 @@
 	};
 
 	app.start();
+
+    // TAG: #draganddropjs
+    var holder = document.getElementById('holder');
+	DragAndDrop.setup(document);
 })();
