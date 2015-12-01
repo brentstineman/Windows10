@@ -19,6 +19,12 @@
 			}
 			args.setPromise(WinJS.UI.processAll());
 		}
+
+	    // Anything where you need a DOM needs to be done after the onactivated has been called - prior to that the DOM is not loaded
+	    // TAG: #draganddropjs
+		var holder = document.getElementById('holder');
+		DragAndDrop.setup(document);
+
 	};
 
 	app.oncheckpoint = function (args) {
@@ -27,9 +33,7 @@
 		// If you need to complete an asynchronous operation before your application is suspended, call args.setPromise().
 	};
 
+    // THIS kicks off the app ful load and run - init the DOM, etc.  After the onactivated is then called.
 	app.start();
 
-    // TAG: #draganddropjs
-    var holder = document.getElementById('holder');
-	DragAndDrop.setup(document);
 })();
